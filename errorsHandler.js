@@ -1,11 +1,12 @@
 const { Lambda } = require('aws-sdk');
 const lambda = new Lambda();
 
-exports.errorsHandler = async ({ awsRequestId: id }, input, output) => {
+exports.errorsHandler = async ({ awsRequestId: id, functionName }, input, output) => {
     const params = {
         FunctionName: 'errorsHandler',
         InvokeArgs: JSON.stringify({
             id,
+            functionName,
             input,
             output
         }),
