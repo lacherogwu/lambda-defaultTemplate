@@ -1,4 +1,4 @@
-const { Lambda } = require('aws-sdk');
+const Lambda = require('aws-sdk/clients/lambda');
 const lambda = new Lambda();
 
 exports.errorsHandler = async ({ awsRequestId: id, functionName }, input, output) => {
