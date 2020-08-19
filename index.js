@@ -1,4 +1,5 @@
 const { errorsHandler } = require('./errorsHandler');
+const { run } = require('./script');
 
 exports.handler = async (event, context) => {
     const body = JSON.parse(event.body);
