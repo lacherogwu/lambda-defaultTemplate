@@ -10,9 +10,9 @@ exports.handler = async (event, context) => {
         response.body = data;
         
     } catch (err) {
-        await errorsHandler(context, event, err);
-        response.body = err.response.data;
-        response.statusCode = err.response.status;
+        const error = await errorsHandler(context, event, err);
+        response.body = error.data;
+        response.statusCode = error.statusCode;
     }
     
     response.body = JSON.stringify(response.body);

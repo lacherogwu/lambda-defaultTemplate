@@ -1,37 +1,44 @@
 const Lambda = require('aws-sdk/clients/lambda');
 const lambda = new Lambda();
 
+const throwError = err => {
+    // check if axios error
+    if(err.isAxiosError){
+        const path = err.response;
+        return { 
+            statusCode: path.status || 500,
+            data: {
+                message: err.message || 'No message provided',
+                ...path.data
+            },
+        };
+    }
+
+    // else
+    return { 
+        statusCode: 500,
+        data: {
+            message: err.message || 'No message provided'
+        },
+    };
+};
+
 exports.errorsHandler = async ({ awsRequestId: id, functionName }, input, output) => {
+    // printing the full error object
+    console.log(output);
+    
+    const error = throwError(output);
     const params = {
         FunctionName: 'errorsHandler',
         InvokeArgs: JSON.stringify({
             id,
             functionName,
             input,
-            output
+            output: error,
         }),
     };
 
     await lambda.invokeAsync(params).promise();
-};
 
-exports.createError = (data, status) => {
-    const res = {
-        response: {
-            data: {},
-            status: status || 400
-        }
-    };
-
-    if(typeof data === 'string'){
-        res.response.data.message = data;
-    } else if (typeof data === 'object'){
-        res.response.data = data;
-    } else {
-        res.response.data = {
-            message: 'No message provided'
-        };
-    }
-    
-    return res;
+    return error;
 };
